@@ -12,6 +12,7 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '7PgONuml7C12uKOr3-K4MNPtvomw4PLL',
@@ -49,6 +50,12 @@ $config = [
             'showScriptName' => false,
             'rules' => [
             ],
+        ],
+
+    ],
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
         ],
     ],
     'params' => $params,
