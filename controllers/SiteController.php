@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Article;
+use app\models\Category;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,6 +11,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\data\Pagination;
 
 class SiteController extends Controller
 {
@@ -61,41 +64,53 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
-    }
+        $data = Article::getAll(1);
+        $popular = Article::getPopular();
+        $recent =Article::getRecent();
+        $categories = Category::getAll();
 
+        return $this->render('index',[
+            'articles'   => $data['articles'],
+            'pagination' => $data['pagination'],
+            'popular'    => $popular,
+            'recent'     => $recent,
+            'categories' => $categories,
+        ]);
+    }
     /**
      * Login action.
      *
      * @return Response|string
      */
-    public function actionLogin()
+    public function  actionView($id)
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+        $article = Article::findOne($id);
+        $popular = Article::getPopular();
+        $recent =Article::getRecent();
+        $categories = Category::getAll();
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
+        return $this->render('single',[
+            'article' => $article,
+            'popular'    => $popular,
+            'recent'     => $recent,
+            'categories' => $categories,
         ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
+    public function actionCategory($id)
     {
-        Yii::$app->user->logout();
+        $popular = Article::getPopular();
+        $recent = Article::getRecent();
+        $categories = Category::getAll();
+        $data = Category::getArticlesByCategory($id);
 
-        return $this->goHome();
+        return $this->render('category',[
+            'articles'   => $data['articles'],
+            'pagination' => $data['pagination'],
+            'popular'    => $popular,
+            'recent'     => $recent,
+            'categories' => $categories,
+        ]);
     }
 
     /**
